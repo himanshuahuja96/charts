@@ -141,11 +141,7 @@ spec:
       {{ end }}
       {{ if .Values.metricsExporter.enabled }}
       - name: metrics
-        {{- if .Values.metricsExporter.tag }}
         image: {{ .Values.metricsExporter.image }}
-        {{- else }}
-        image: prom/mysqld-exporter
-        {{- end }}
         imagePullPolicy: IfNotPresent
 {{- if .Values.metricsExporter.commandOverrides }}
         command:
