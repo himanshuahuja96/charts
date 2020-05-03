@@ -77,6 +77,12 @@ tolerations: []
 #    memory: 256Mi
 #    cpu: 100m
 
+initContainer:
+  image: "busybox:1.25.0"
+  # resources:
+  #  requests:
+  #    memory: 256Mi
+  #    cpu: 100m
 configFiles:
   node.cnf: |+
     [mysqld]
@@ -98,8 +104,13 @@ configFiles:
 ## metrics exporting
 metricsExporter:
   enabled: false
+  image: "prom/mysqld-exporter:v0.12.1"
   commandOverrides: []
   argsOverrides: []
+  # resources:
+  #  requests:
+  #    memory: 256Mi
+  #    cpu: 100m
 
 prometheus:
   ## Are you using [Prometheus Operator](https://coreos.com/operators/prometheus/docs/latest/user-guides/getting-started.html)?
@@ -134,8 +145,13 @@ prometheus:
       #   prometheus: kube-prometheus
 
 ## When set to true will create sidecar to tail mysql log
-logTail: true
-
+logTail:
+  enabled: true
+  image: "busybox:1.25.0"
+  # resources:
+  #  requests:
+  #    memory: 256Mi
+  #    cpu: 100m
 ssl:
   enabled: false
   secret: mysql-ssl-certs

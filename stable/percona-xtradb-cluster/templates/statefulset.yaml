@@ -27,8 +27,12 @@ spec:
     spec:
       initContainers:
       - name: "remove-lost-found"
-        image: "busybox:1.25.0"
+        image: {{ .Values.initContainer.image }}
         imagePullPolicy: IfNotPresent
+        {{- if .Values.initContainer.resources }}
+        resources:
+{{ toYaml .Values.initContainer.resources | indent 10 }}
+        {{- end }}
         command:
         - "rm"
         - "-fr"
@@ -119,10 +123,14 @@ spec:
         - name: certificates
           mountPath: /ssl
         {{- end }}
-      {{ if .Values.logTail }}
+      {{ if .Values.logTail.enabled }}
       - name: "logs"
-        image: "busybox:1.25.0"
+        image: {{ .Values.logTail.image }}
         imagePullPolicy: IfNotPresent
+        {{- if .Values.logTail.resources }}
+        resources:
+{{ toYaml .Values.logTail.resources | indent 10 }}
+        {{- end}}
         command:
         - "tail"
         - "-f"
@@ -134,7 +142,7 @@ spec:
       {{ if .Values.metricsExporter.enabled }}
       - name: metrics
         {{- if .Values.metricsExporter.tag }}
-        image: prom/mysqld-exporter:{{ .Values.metricsExporter.tag }}
+        image: {{ .Values.metricsExporter.image }}
         {{- else }}
         image: prom/mysqld-exporter
         {{- end }}
@@ -147,6 +155,10 @@ spec:
         args:
 {{ toYaml .Values.metricsExporter.argsOverrides | indent 8 }}
 {{- end }}
+        {{- if .Values.metricsExporter.resources }}
+        resources:
+{{ toYaml .Values.metricsExporter.resources | indent 10 }}
+        {{- end}}
         ports:
         - name: metrics
           containerPort: 9104
